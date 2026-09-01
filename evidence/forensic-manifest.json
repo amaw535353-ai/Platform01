@@ -1,13 +1,14 @@
 {
-  "version": 1,
+  "version": 2,
+  "trust_boundary": "tamper-evident local files; not immutable storage",
   "sanitized_files": [
     {
       "file": "evidence/attack-report.json",
-      "sha256": "844ba08455f98145ad7dd5255756b1b3031fbbcd55b35cd864534223a48c3c06"
+      "sha256": "475db5cc85301c29b246cb8f20bd60341fbac5c215b26d7763bb69b905dcb3b7"
     },
     {
       "file": "evidence/metrics-v1.json",
-      "sha256": "8f12e5b1c8b53c004b68fb11038828f033a6cb8aa3397407e8daaae38f4de877"
+      "sha256": "525314a9c703e7aad54a346e081fb9513c465ccafbc8cc93e25fd00090e4de37"
     }
   ]
 }

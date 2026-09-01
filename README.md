@@ -35,3 +35,6 @@ The tested offline core models the BFF, explicit orchestrator, knowledge/workflo
 
 The vulnerable service is never in the default profile. A deliberate lab start is `docker compose -f deploy/compose/compose.yaml --profile lab-vulnerable up lab-vulnerable`; it demonstrates cross-tenant retrieval, wrong-audience acceptance, and no-approval simulated execution. See [architecture](docs/architecture.md), [threat model](docs/threat-model.md), [traceability](docs/control-traceability.md), [operations](docs/operations-runbook.md), [evidence](evidence/attack-report.md), and [limitations](docs/limitations.md).
 
+
+## Remediation trust boundary
+This is an in-memory, single-process security reference, not a production-ready MCP platform. Capability schemas, tenant filtering, approval/idempotency rules, denial auditing, DLP, and the synthetic attack lab are implemented and tested. OIDC/JWKS, live OPA, PostgreSQL/RLS, Keycloak, and MCP SDK integration are design-only and are not enforcement paths. Use `uv sync --frozen --extra dev`; the vulnerable HTTP entry point starts only through the explicit `lab-vulnerable` Compose profile.

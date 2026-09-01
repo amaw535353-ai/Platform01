@@ -11,3 +11,8 @@
 | PostgreSQL FORCE RLS | database migration | defined; container/raw-SQL verification pending |
 | OPA double PEP | Rego policy and core PEP | defined; live OPA integration pending |
 
+| Strict capability requests | unit/schema tests | implemented and tested |
+| Bound approval/idempotency | integration and thread-race tests | implemented in-process |
+| Tenant retrieval/quarantine | attack fixtures | implemented and tested |
+| Correlated audit and DLP | unit/integration tests and manifest | implemented and tested |
+| OIDC, live OPA/RLS, MCP | none | not implemented; design-only artifacts |

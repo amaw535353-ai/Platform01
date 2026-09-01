@@ -1,29 +1,119 @@
 {
-  "test_set": "attack-v1",
+  "schema_version": 2,
+  "generated_at": "2026-09-01T11:19:37.434749+00:00",
+  "tested_commit": "f291747669f3f12f2263cb484febf32fbdf0a04b",
+  "fixture_count": 14,
+  "passed": 14,
+  "failed": 0,
+  "tool_versions": {
+    "search_knowledge": "1.0.0",
+    "get_ticket": "1.0.0",
+    "create_ticket_draft": "1.0.0",
+    "update_ticket": "1.0.0",
+    "send_customer_reply": "1.0.0",
+    "export_case": "1.0.0"
+  },
+  "vulnerable_comparison": {
+    "cross_tenant_attack_succeeded": true
+  },
   "cases": [
     {
-      "profile": "vulnerable",
+      "profile": "hardened",
       "category": "cross_tenant_retrieval",
-      "attack_success": true,
-      "reason": "ATTACK_SUCCEEDED"
-    },
-    {
-      "profile": "vulnerable",
-      "category": "wrong_audience_side_effect",
-      "attack_success": true,
-      "reason": "ATTACK_SUCCEEDED"
+      "expected_reason": "POLICY_ALLOW",
+      "actual_reason": "POLICY_ALLOW",
+      "passed": true
     },
     {
       "profile": "hardened",
-      "category": "cross_tenant_retrieval",
-      "attack_success": false,
-      "reason": "TOKEN_AUDIENCE_INVALID"
+      "category": "wrong_audience",
+      "expected_reason": "TOKEN_AUDIENCE_INVALID",
+      "actual_reason": "TOKEN_AUDIENCE_INVALID",
+      "passed": true
     },
     {
       "profile": "hardened",
-      "category": "wrong_audience_side_effect",
-      "attack_success": false,
-      "reason": "TOKEN_AUDIENCE_INVALID"
+      "category": "wrong_issuer",
+      "expected_reason": "TOKEN_ISSUER_INVALID",
+      "actual_reason": "TOKEN_ISSUER_INVALID",
+      "passed": true
+    },
+    {
+      "profile": "hardened",
+      "category": "expired",
+      "expected_reason": "TOKEN_EXPIRED",
+      "actual_reason": "TOKEN_EXPIRED",
+      "passed": true
+    },
+    {
+      "profile": "hardened",
+      "category": "wrong_client",
+      "expected_reason": "TOKEN_CLIENT_INVALID",
+      "actual_reason": "TOKEN_CLIENT_INVALID",
+      "passed": true
+    },
+    {
+      "profile": "hardened",
+      "category": "missing_scope",
+      "expected_reason": "SCOPE_MISSING",
+      "actual_reason": "SCOPE_MISSING",
+      "passed": true
+    },
+    {
+      "profile": "hardened",
+      "category": "wildcard_scope",
+      "expected_reason": "SCOPE_MISSING",
+      "actual_reason": "SCOPE_MISSING",
+      "passed": true
+    },
+    {
+      "profile": "hardened",
+      "category": "unknown_field",
+      "expected_reason": "SCHEMA_INVALID",
+      "actual_reason": "SCHEMA_INVALID",
+      "passed": true
+    },
+    {
+      "profile": "hardened",
+      "category": "boolean_integer",
+      "expected_reason": "SCHEMA_INVALID",
+      "actual_reason": "SCHEMA_INVALID",
+      "passed": true
+    },
+    {
+      "profile": "hardened",
+      "category": "invalid_enum",
+      "expected_reason": "SCHEMA_INVALID",
+      "actual_reason": "SCHEMA_INVALID",
+      "passed": true
+    },
+    {
+      "profile": "hardened",
+      "category": "oversized_value",
+      "expected_reason": "SCHEMA_INVALID",
+      "actual_reason": "SCHEMA_INVALID",
+      "passed": true
+    },
+    {
+      "profile": "hardened",
+      "category": "registry_mutation",
+      "expected_reason": "REGISTRY_IMMUTABLE",
+      "actual_reason": "REGISTRY_IMMUTABLE",
+      "passed": true
+    },
+    {
+      "profile": "hardened",
+      "category": "bearer_redaction",
+      "expected_reason": "POLICY_ALLOW",
+      "actual_reason": "POLICY_ALLOW",
+      "passed": true
+    },
+    {
+      "profile": "hardened",
+      "category": "poison_quarantine",
+      "expected_reason": "POLICY_ALLOW",
+      "actual_reason": "POLICY_ALLOW",
+      "passed": true
     }
   ]
 }
