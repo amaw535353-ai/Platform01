@@ -38,14 +38,19 @@ def get_alice_token() -> str:
         method="POST",
     )
     last_error: Exception | None = None
+    last_response: tuple[int, dict] | None = None
     for _ in range(60):
         try:
             status, payload = request_json(request)
+            last_response = (status, payload)
             if status == 200 and isinstance(payload.get("access_token"), str):
                 return payload["access_token"]
         except (URLError, TimeoutError, ConnectionError, json.JSONDecodeError) as exc:
             last_error = exc
         time.sleep(2)
+    if last_response is not None:
+        status, payload = last_response
+        raise RuntimeError(f"Keycloak token endpoint returned {status}: {payload}")
     raise RuntimeError("Keycloak token endpoint did not become ready") from last_error
 
 
