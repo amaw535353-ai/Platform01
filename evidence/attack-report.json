@@ -1,0 +1,29 @@
+{
+  "test_set": "attack-v1",
+  "cases": [
+    {
+      "profile": "vulnerable",
+      "category": "cross_tenant_retrieval",
+      "attack_success": true,
+      "reason": "ATTACK_SUCCEEDED"
+    },
+    {
+      "profile": "vulnerable",
+      "category": "wrong_audience_side_effect",
+      "attack_success": true,
+      "reason": "ATTACK_SUCCEEDED"
+    },
+    {
+      "profile": "hardened",
+      "category": "cross_tenant_retrieval",
+      "attack_success": false,
+      "reason": "TOKEN_AUDIENCE_INVALID"
+    },
+    {
+      "profile": "hardened",
+      "category": "wrong_audience_side_effect",
+      "attack_success": false,
+      "reason": "TOKEN_AUDIENCE_INVALID"
+    }
+  ]
+}

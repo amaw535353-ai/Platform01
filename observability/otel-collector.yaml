@@ -1,0 +1,4 @@
+receivers: {otlp: {protocols: {grpc: {}, http: {}}}}
+processors: {attributes/redact: {actions: [{key: prompt, action: delete}, {key: retrieved_text, action: delete}, {key: authorization, action: delete}]}, batch: {}}
+exporters: {debug: {verbosity: basic}}
+service: {pipelines: {traces: {receivers: [otlp], processors: [attributes/redact, batch], exporters: [debug]}}}

@@ -1,0 +1,26 @@
+services:
+  api:
+    build: {context: ../.., dockerfile: deploy/compose/Dockerfile}
+    ports: ["127.0.0.1:8000:8000"]
+    read_only: true
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: ["ALL"]
+    tmpfs: ["/tmp"]
+  postgres:
+    image: pgvector/pgvector:pg17@sha256:83b5e5ef7e7f62cd00a4e1f39f25862a98af67bdde88e4e5516e78d9f37a1f09
+    environment: {POSTGRES_PASSWORD: "local-generated-at-bootstrap"}
+    networks: [data]
+  opa:
+    image: openpolicyagent/opa:1.7.1-static@sha256:2a890870fdb782fadf4206600d2e3f5d2c135629661d193956a27411f8f09e3e
+    command: ["run", "--server", "/policies"]
+    volumes: ["../../policies/opa:/policies:ro"]
+  lab-vulnerable:
+    profiles: ["lab-vulnerable"]
+    build: {context: ../.., dockerfile: deploy/compose/Dockerfile}
+    environment: {LAB_WARNING: "INTENTIONALLY VULNERABLE SYNTHETIC LAB"}
+    ports: ["127.0.0.1:18000:8000"]
+    networks: [lab]
+networks:
+  data: {internal: true}
+  lab: {internal: true}
+

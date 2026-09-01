@@ -1,0 +1,9 @@
+name: release-provenance-design
+on: {workflow_dispatch: {}}
+permissions: {contents: read, id-token: write, attestations: write}
+jobs:
+  design-only:
+    runs-on: ubuntu-24.04
+    steps:
+      - run: echo 'Signing intentionally disabled until an authorized GitHub environment verifies Cosign, in-toto, and SLSA configuration.'
+

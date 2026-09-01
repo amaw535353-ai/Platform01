@@ -1,0 +1,8 @@
+$ PYTHONPATH=. pytest -q
+...........                                                              [100%]
+$ ruff check .
+All checks passed!
+$ mypy packages
+Success: no issues found in 2 source files
+$ python -m compileall -q apps packages services attack-lab scripts
+$ git diff --check

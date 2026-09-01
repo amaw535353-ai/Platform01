@@ -1,0 +1,18 @@
+{
+  "test_set": "attack-v1",
+  "environment": "deterministic in-process FakeLLM-free core; synthetic data",
+  "limitations": "Finite two-case attack set; live services and latency instrumentation not executed.",
+  "metrics": [
+    {"name":"attack_success_rate_hardened","formula":"successful attacks / attempted attacks","numerator":0,"denominator":2,"value":0.0},
+    {"name":"attack_success_rate_vulnerable","formula":"successful attacks / attempted attacks","numerator":2,"denominator":2,"value":1.0},
+    {"name":"cross_tenant_isolation_failures_hardened","formula":"cross-tenant data disclosures / attempts","numerator":0,"denominator":1,"value":0.0},
+    {"name":"unauthorized_tool_call_success_rate","formula":"unauthorized executions / attempts","numerator":0,"denominator":1,"value":0.0},
+    {"name":"high_risk_without_approval","formula":"high-risk executions lacking valid approval / attempts","numerator":0,"denominator":1,"value":0.0},
+    {"name":"dlp_seeded_secret_leakage_rate","formula":"unredacted seeded values / seeded values","numerator":0,"denominator":1,"value":0.0},
+    {"name":"policy_false_positive_rate","formula":"authorized labeled cases denied / authorized labeled cases","numerator":0,"denominator":1,"value":0.0},
+    {"name":"policy_false_negative_rate","formula":"denied labeled cases allowed / denied labeled cases","numerator":0,"denominator":2,"value":0.0},
+    {"name":"token_cost_budget_violations","formula":"budget violations / evaluated requests","numerator":0,"denominator":1,"value":0.0},
+    {"name":"latency_overhead_ms","formula":"percentile(check elapsed time)","numerator":null,"denominator":null,"value":{"p50":null,"p95":null},"status":"not measured"}
+  ]
+}
+
