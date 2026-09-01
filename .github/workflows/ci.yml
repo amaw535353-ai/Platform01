@@ -9,7 +9,14 @@ jobs:
       - uses: astral-sh/setup-uv@b75a909f75acd358c2196fb9a5f1299a9a8868a4 # v6.7.0
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with: {python-version: "3.12"}
-      - run: uv sync --frozen --extra dev
+      - name: Install dependencies
+        run: |
+          if [ -f uv.lock ]; then
+            uv sync --frozen --extra dev
+          else
+            echo "::warning::uv.lock is missing; resolving dependencies from pyproject.toml"
+            uv sync --extra dev
+          fi
       - run: uv run ruff check .
       - run: uv run mypy packages
       - run: uv run pytest -q --cov=packages.zt_platform --cov-report=term-missing --cov-report=xml --cov-fail-under=90
@@ -28,10 +35,16 @@ jobs:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with: {fetch-depth: 0}
       - name: Secret scan
-        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2.3.9
+        uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Filesystem scan and SBOM
-        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # v0.33.1
-        with: {scan-type: fs, format: cyclonedx, output: evidence/sbom.cdx.json}
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          scan-type: fs
+          format: cyclonedx
+          output: evidence/sbom.cdx.json
+          version: v0.74.0
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
         with: {name: supply-chain-evidence, path: evidence/sbom.cdx.json}
