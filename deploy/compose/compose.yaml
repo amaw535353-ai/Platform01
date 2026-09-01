@@ -52,6 +52,7 @@ services:
     volumes:
       - ../keycloak/realm-support.json:/opt/keycloak/data/import/realm-support.json:ro
     ports: ["127.0.0.1:8080:8080"]
+    mem_limit: 1g
     security_opt: ["no-new-privileges:true"]
 
   lab-vulnerable:
