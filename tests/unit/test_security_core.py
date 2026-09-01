@@ -2,7 +2,7 @@ import time
 
 import pytest
 
-from packages.zt_platform.core import AuditChain, Denied, Principal, redact, validate_external_url
+from packages.zt_platform.core import AuditChain, Denied, Principal, TOOLS, redact, validate_args, validate_external_url
 
 
 def principal(**changes):
@@ -49,3 +49,23 @@ def test_audit_tamper_detection():
     assert chain.verify()
     chain.events[0]["tenant"] = "globex"
     assert not chain.verify()
+
+
+def test_registry_and_strict_schemas():
+    with pytest.raises(TypeError):
+        TOOLS["evil"] = TOOLS["get_ticket"]  # type: ignore[index]
+    bad = [
+        {"query": "x", "top_k": True},
+        {"query": "x", "top_k": 1, "extra": "x"},
+        {"query": " x", "top_k": 1},
+        {"query": "x", "top_k": 6},
+    ]
+    for args in bad:
+        with pytest.raises(Denied, match="SCHEMA_INVALID"):
+            validate_args(TOOLS["search_knowledge"], args)
+
+
+def test_bearer_password_and_secret_redaction():
+    value, labels = redact("Bearer abc.def password=hunter2 secret:token 123-45-6789")
+    assert "abc.def" not in value and "hunter2" not in value and "token" not in value
+    assert labels == ["SENSITIVE_DATA"]

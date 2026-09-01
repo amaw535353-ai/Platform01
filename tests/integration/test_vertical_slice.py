@@ -3,7 +3,7 @@ import pytest
 from packages.zt_platform.core import Denied, Platform, Principal, TOOLS
 
 
-def actor(tenant="acme", subject="alice", roles=("analyst",), scopes=("kb:read", "messages:send")):
+def actor(tenant="acme", subject="alice", roles=("analyst",), scopes=("kb:read", "messages:send", "approvals:grant")):
     return Principal(subject, tenant, frozenset(roles), frozenset(scopes))
 
 
@@ -24,7 +24,7 @@ def test_approval_argument_binding_replay_and_outbox_dlp():
     )
     with pytest.raises(Denied, match="APPROVAL_BINDING_MISMATCH"):
         app.invoke(
-            requester, "send_customer_reply", {**args, "body": "changed"}, "corr-approve", handle
+            requester, "send_customer_reply", {**args, "body": "changed"}, "corr-approve", handle, "mutation"
         )
     app.invoke(requester, "send_customer_reply", args, "corr-approve", handle, "idem-1")
     assert app.outbox == [
@@ -36,7 +36,7 @@ def test_approval_argument_binding_replay_and_outbox_dlp():
         }
     ]
     with pytest.raises(Denied, match="APPROVAL_REPLAY"):
-        app.invoke(requester, "send_customer_reply", args, "corr-approve", handle)
+        app.invoke(requester, "send_customer_reply", args, "corr-approve", handle, "idem-2")
     assert app.audit.verify()
 
 
@@ -52,4 +52,4 @@ def test_cross_tenant_approval_and_unapproved_execution_denied():
             "c",
         )
     with pytest.raises(Denied, match="APPROVAL_REQUIRED"):
-        app.invoke(requester, "send_customer_reply", {"ticket_id": "1", "body": "ok"}, "c")
+        app.invoke(requester, "send_customer_reply", {"ticket_id": "1", "body": "ok"}, "c", idempotency_key="i")
