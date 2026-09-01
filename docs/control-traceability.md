@@ -1,18 +1,26 @@
 # Control traceability
-| Control | Automated test | Evidence/status |
-|---|---|---|
-| Tenant-filtered cited retrieval/quarantine | `tests/integration/test_vertical_slice.py` | pytest output; implemented/tested in-process |
-| JWT claim/audience/scope checks | `tests/unit/test_security_core.py` | pytest output; claim validator tested, signature/JWKS integration pending |
-| Approval binding, expiry, replay, DLP outbox | `tests/integration/test_vertical_slice.py` | pytest output; implemented/tested |
-| Cross-tenant approval/unapproved tool denial | `tests/integration/test_vertical_slice.py` | pytest output; implemented/tested |
-| SSRF syntax/private target rejection | `tests/unit/test_security_core.py` | pytest output; no network called |
-| Audit chain tamper evidence | `tests/unit/test_security_core.py` | pytest output; mutable storage accurately described |
-| Vulnerable/hardened comparison | `tests/security/test_attacks.py` | `evidence/attack-report.{json,md}` |
-| PostgreSQL FORCE RLS | database migration | defined; container/raw-SQL verification pending |
-| OPA double PEP | Rego policy and core PEP | defined; live OPA integration pending |
 
-| Strict capability requests | unit/schema tests | implemented and tested |
-| Bound approval/idempotency | integration and thread-race tests | implemented in-process |
-| Tenant retrieval/quarantine | attack fixtures | implemented and tested |
-| Correlated audit and DLP | unit/integration tests and manifest | implemented and tested |
-| OIDC, live OPA/RLS, MCP | none | not implemented; design-only artifacts |
+| Control | Automated evidence | Status |
+|---|---|---|
+| Signed Keycloak JWT / JWKS, issuer, audience, expiry, tenant claim | `scripts/live_slice.py` in `security-ci` | ✅ Live Compose / CI |
+| OPA tenant + scope authorization | `scripts/live_slice.py`, `policies/opa/agent.rego` | ✅ Live HTTP decision / CI |
+| PostgreSQL FORCE RLS independent of application tenant filter | `scripts/live_slice.py`, `db/migrations/001_rls.sql` | ✅ Live PostgreSQL / CI |
+| Acme allow / Globex cross-tenant deny | `scripts/live_slice.py`, `evidence/live-slice.json` artifact | ✅ Live integration evidence |
+| Tenant-filtered in-memory retrieval / quarantine | `tests/integration/test_vertical_slice.py`, attack lab | ✅ Implemented / tested |
+| Claim/audience/scope checks in deterministic core | `tests/unit/test_security_core.py`, attack lab | ✅ Implemented / tested |
+| Approval binding, expiry, replay and substitution | integration tests + attack lab | ✅ Implemented / tested in-process |
+| Idempotency binding | integration tests + attack lab | ✅ Implemented / tested in-process |
+| DLP local outbox | integration tests + attack lab | ✅ Implemented / tested in-process |
+| Strict capability schemas / immutable registry | unit/schema tests + attack lab | ✅ Implemented / tested |
+| SSRF syntax/private target rejection | unit tests + attack lab | ✅ Implemented / no network call |
+| Audit hash-chain tamper detection | unit tests + attack lab | ✅ Implemented / mutable local storage |
+| Vulnerable vs hardened comparison | `attack-lab/run.py` | ✅ Synthetic regression evidence |
+| Hardened container build | `security-ci` | ✅ Executed in CI |
+| Gitleaks secret scan | `security-ci` | ✅ Executed in CI |
+| Trivy filesystem scan + CycloneDX SBOM | `security-ci` | ✅ Executed in CI |
+| Browser Auth Code + PKCE/session controls | none | 🟡 Design only |
+| Official MCP SDK / Streamable HTTP | none | 🟡 Design only |
+| Short-lived/down-scoped token exchange | none | 🟡 Design only |
+| Durable distributed approvals/outbox/audit | none | 🟡 Design only |
+
+The live integration proves the identity, policy, and database boundaries for one tenant-scoped knowledge path. It does not imply that the target MCP or browser-authentication architecture has been implemented.
