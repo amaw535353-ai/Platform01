@@ -43,20 +43,26 @@ def get_alice_token() -> str:
             status, payload = request_json(request)
             if status == 200 and isinstance(payload.get("access_token"), str):
                 return payload["access_token"]
-        except (URLError, TimeoutError, json.JSONDecodeError) as exc:
+        except (URLError, TimeoutError, ConnectionError, json.JSONDecodeError) as exc:
             last_error = exc
         time.sleep(2)
     raise RuntimeError("Keycloak token endpoint did not become ready") from last_error
 
 
 def api_get(token: str, tenant: str) -> tuple[int, dict]:
-    return request_json(
-        Request(
-            f"{API_URL}/{tenant}",
-            headers={"Authorization": f"Bearer {token}"},
-            method="GET",
-        )
+    request = Request(
+        f"{API_URL}/{tenant}",
+        headers={"Authorization": f"Bearer {token}"},
+        method="GET",
     )
+    last_error: Exception | None = None
+    for _ in range(30):
+        try:
+            return request_json(request)
+        except (URLError, TimeoutError, ConnectionError, json.JSONDecodeError) as exc:
+            last_error = exc
+            time.sleep(1)
+    raise RuntimeError("API did not become ready") from last_error
 
 
 def main() -> None:
