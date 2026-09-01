@@ -1,0 +1,2 @@
+{"name":"zero-trust-agentic-rag","image":"mcr.microsoft.com/devcontainers/python:1-3.12-bookworm","forwardPorts":[8000,8080],"portsAttributes":{"8000":{"visibility":"private"},"8080":{"visibility":"private"}},"postCreateCommand":"make bootstrap"}
+

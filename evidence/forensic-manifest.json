@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "sanitized_files": [
+    {
+      "file": "evidence/attack-report.json",
+      "sha256": "844ba08455f98145ad7dd5255756b1b3031fbbcd55b35cd864534223a48c3c06"
+    },
+    {
+      "file": "evidence/metrics-v1.json",
+      "sha256": "8f12e5b1c8b53c004b68fb11038828f033a6cb8aa3397407e8daaae38f4de877"
+    }
+  ]
+}
