@@ -1,11 +1,59 @@
 services:
   api:
     build: {context: ../.., dockerfile: deploy/compose/Dockerfile}
+    environment:
+      OIDC_ISSUER: http://127.0.0.1:8080/realms/support
+      OIDC_JWKS_URI: http://keycloak:8080/realms/support/protocol/openid-connect/certs
+      OIDC_AUDIENCE: platform-api
+      OPA_DECISION_URL: http://opa:8181/v1/data/agent/authz/decision
+      DATABASE_URL: postgresql://app_login:synthetic-app-password@postgres:5432/platform
+    depends_on:
+      postgres: {condition: service_healthy}
+      keycloak: {condition: service_started}
+      opa: {condition: service_started}
     ports: ["127.0.0.1:8000:8000"]
     read_only: true
     security_opt: ["no-new-privileges:true"]
     cap_drop: ["ALL"]
     tmpfs: ["/tmp"]
+
+  postgres:
+    image: pgvector/pgvector:0.8.6-pg17@sha256:cf134a767f474095eeba57e0117be8e568e011a63f33fbf252f14c9b760f8e6f
+    environment:
+      POSTGRES_DB: platform
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: synthetic-postgres-password
+    volumes:
+      - ../../db/migrations/001_rls.sql:/docker-entrypoint-initdb.d/001_rls.sql:ro
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d platform"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+    security_opt: ["no-new-privileges:true"]
+
+  opa:
+    image: openpolicyagent/opa:1.20.1-static
+    command:
+      ["run", "--server", "--addr=0.0.0.0:8181", "--skip-version-check", "/policy/agent.rego"]
+    volumes:
+      - ../../policies/opa/agent.rego:/policy/agent.rego:ro
+    read_only: true
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: ["ALL"]
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.7.3
+    command: ["start-dev", "--import-realm", "--hostname-strict=false"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: synthetic-admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: synthetic-admin-password
+    volumes:
+      - ../keycloak/realm-support.json:/opt/keycloak/data/import/realm-support.json:ro
+    ports: ["127.0.0.1:8080:8080"]
+    security_opt: ["no-new-privileges:true"]
+
   lab-vulnerable:
     profiles: ["lab-vulnerable"]
     build: {context: ../.., dockerfile: deploy/compose/Dockerfile}
@@ -17,5 +65,9 @@ services:
     security_opt: ["no-new-privileges:true"]
     cap_drop: ["ALL"]
     tmpfs: ["/tmp"]
+
 networks:
   lab: {internal: true}
+
+volumes:
+  postgres_data:

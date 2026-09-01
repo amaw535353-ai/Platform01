@@ -1,5 +1,9 @@
-from fastapi import FastAPI
+from typing import Annotated
+
+from fastapi import FastAPI, Header
 from fastapi.responses import JSONResponse
+
+from apps.api.live_security import live_knowledge
 
 app = FastAPI(title="Zero-Trust Agentic RAG/MCP Platform", docs_url=None, redoc_url=None)
 
@@ -21,6 +25,14 @@ async def headers(request, call_next):
 @app.get("/healthz")
 def healthz():
     return {"status": "ok"}
+
+
+@app.get("/live/knowledge/{tenant_id}")
+def get_live_knowledge(
+    tenant_id: str,
+    authorization: Annotated[str | None, Header()] = None,
+):
+    return live_knowledge(authorization, tenant_id)
 
 
 @app.get("/.well-known/oauth-protected-resource")

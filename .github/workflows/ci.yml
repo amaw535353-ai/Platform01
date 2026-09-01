@@ -4,6 +4,7 @@ permissions: {contents: read}
 jobs:
   python:
     runs-on: ubuntu-24.04
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - uses: astral-sh/setup-uv@b75a909f75acd358c2196fb9a5f1299a9a8868a4 # v6.7.0
@@ -23,11 +24,17 @@ jobs:
       - run: uv run bandit -q -r packages apps services
       - run: uv run python attack-lab/run.py
       - run: uv run python scripts/forensic_bundle.py
-      - run: docker compose -f deploy/compose/compose.yaml build
-      - run: |
-          docker compose -f deploy/compose/compose.yaml up -d api
-          for i in {1..20}; do curl -fsS http://127.0.0.1:8000/healthz && exit 0; sleep 2; done; exit 1
+      - name: Build hardened API image
+        run: docker compose -f deploy/compose/compose.yaml build api
+      - name: Run live zero-trust slice
+        run: |
+          docker compose -f deploy/compose/compose.yaml up -d postgres opa keycloak api
+          uv run python scripts/live_slice.py
+      - name: Stop live services
+        if: always()
+        run: docker compose -f deploy/compose/compose.yaml down -v
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
         with: {name: security-evidence, path: "evidence/"}
   supply-chain-design:
     runs-on: ubuntu-24.04

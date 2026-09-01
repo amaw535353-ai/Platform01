@@ -1,8 +1,16 @@
 [project]
 name = "zero-trust-agentic-rag-mcp"
-version = "0.1.0"
+version = "0.2.0"
 requires-python = ">=3.12,<3.13"
-dependencies = ["fastapi==0.116.1", "pydantic==2.11.7", "sqlalchemy==2.0.43", "uvicorn==0.35.0"]
+dependencies = [
+  "fastapi==0.116.1",
+  "httpx==0.28.1",
+  "psycopg[binary]==3.3.5",
+  "PyJWT[crypto]==2.13.0",
+  "pydantic==2.11.7",
+  "sqlalchemy==2.0.43",
+  "uvicorn==0.35.0",
+]
 
 [build-system]
 requires = ["hatchling==1.27.0"]
@@ -12,7 +20,13 @@ build-backend = "hatchling.build"
 packages = ["packages"]
 
 [project.optional-dependencies]
-dev = ["pytest==8.4.1", "pytest-cov==6.2.1", "ruff==0.12.10", "mypy==1.17.1", "bandit==1.8.6", "httpx==0.28.1"]
+dev = [
+  "pytest==8.4.1",
+  "pytest-cov==6.2.1",
+  "ruff==0.12.10",
+  "mypy==1.17.1",
+  "bandit==1.8.6",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
