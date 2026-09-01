@@ -17,7 +17,7 @@ import time
 from dataclasses import dataclass, field
 from enum import Enum
 from types import MappingProxyType
-from typing import Any, ClassVar, Literal, Mapping
+from typing import Any, ClassVar, Literal, Mapping, NoReturn
 from urllib.parse import urlparse
 
 from pydantic import (
@@ -374,7 +374,7 @@ class Platform:
 
     def _deny(
         self, principal: Principal, correlation_id: str, reason: str, resource: str = ""
-    ) -> None:
+    ) -> NoReturn:
         self.audit.emit("security_decision", principal, correlation_id, "deny", reason, resource)
         raise Denied(reason)
 
@@ -408,7 +408,6 @@ class Platform:
         tool = TOOLS.get(name)
         if not tool:
             self._deny(principal, correlation_id, "TOOL_UNKNOWN")
-        assert tool is not None
         try:
             principal.validate(tool.scope)
             clean = validate_args(tool, args)
