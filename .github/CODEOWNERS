@@ -1,0 +1,8 @@
+# Security-sensitive paths require explicit owner review.
+* @amaw535353-ai
+.github/ @amaw535353-ai
+packages/zt_platform/ @amaw535353-ai
+deploy/ @amaw535353-ai
+db/ @amaw535353-ai
+policies/ @amaw535353-ai
+docs/threat-model.md @amaw535353-ai
